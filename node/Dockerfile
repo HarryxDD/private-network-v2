@@ -16,7 +16,7 @@ ARG password
 ARG privatekey
 RUN echo $password > ~/.accountpassword
 RUN echo $privatekey > ~/.privatekey
-ADD ./genesis.json ./genesis/json
+ADD ./genesis.json ./genesis.json
 RUN geth init genesis.json
 RUN geth account import --password ~/.accountpassword ~/.privatekey
 
@@ -24,7 +24,7 @@ ENV address=""
 ENV bootnodeId=""
 ENV bootnodeIp=""
 
-CMD exec geth --bootnodes "enode://$bootnodeId@$bootnodeIp:30301" --networkid "1772002" --verbosity=4 --rpc --rpcaddr "0.0.0.0" --rpcapi "eth,web3,net,admin,debug,db" --rpccorsdomain "*" --syncmode="full"
+CMD exec geth --bootnodes "enode://$bootnodeId@$bootnodeIp:30301" --networkid "1772002" --verbosity=4 --syncmode="full"
 
 EXPOSE 8545
 EXPOSE 30303

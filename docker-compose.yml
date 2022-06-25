@@ -1,9 +1,9 @@
-version: "4"
+version: "3"
 services: 
     geth-bootnode:
         hostname: geth-bootnode
         environment:
-            - nodekeyhex= #nodekeyhex
+            - nodekeyhex=08f0e1dee5c1b4645f3331a566009e41a4514b6cd28656d63d0449ecf812812b #nodekeyhex #where can i find this
         build:
             context: ./bootnode
         ports:
@@ -17,14 +17,13 @@ services:
         depends_on:
             - geth-bootnode
         environment:
-            - address= #address derived from the privatekey
-            - bootnodeId= #derive from the nodekeyhex
+            - address=0x564a739aC1Fec5f4Ff0F9E3B5A8365E30B1b52C8 #address derived from the privatekey
+            - bootnodeId=76a8171707eca17647a47ca99ffd348927dfa60102792ea349a25d5192e61855be83b786e376276a306afcceea4ffd1c9c77e4370b417efc39f328a0d068004c #derive from the nodekeyhex
             - bootnodeIp=172.25.0.101 # why??
         build:
             context: ./miner
-            dockerfile: ./miner/Dockerfile
             args:
-                privatekey: #privatekey
+                privatekey: e7f8d262136ecfb1d605f379ba1beb2d7789fb5d0bd8c14725f6328887c48c87 #privatekey
                 password: pass
         ports:
             - 8546:8545 # localhost:containerhost
@@ -40,19 +39,18 @@ services:
         depends_on:
             - geth-bootnode
         environment:
-            - address= #address derived from the private key
-            - bootnodeId= #derived from the nodekeyhex
+            - address=0xa76e6e9B5ef94dd2A748216c42C060A90575D9F5 #address derived from the private key
+            - bootnodeId=76a8171707eca17647a47ca99ffd348927dfa60102792ea349a25d5192e61855be83b786e376276a306afcceea4ffd1c9c77e4370b417efc39f328a0d068004c #derived from the nodekeyhex
             - bootnodeIp=172.25.0.101
         build:
-            context: .
-            dockerfile: ./miner/Dockerfile
+            context: ./miner
             args:
-                privatekey: #privatekey
+                privatekey: 9789913ab054cdd5bfae44b1dcd47126250e499be92447d05362151d218d6bff #privatekey
                 password: pass
         container_name: geth-miner-2
         ports:
             - 8547:8545
-        valumes:
+        volumes:
             - eth-data-2:/root/.ethash
         networks:
             chainnet:
@@ -63,14 +61,13 @@ services:
         depends_on:
             - geth-bootnode
         environment:
-            - address= #address derived from the private key
-            - bootnodeId= #derived from the nodekeyhex
+            - address=0xB55Fc240219d0F90F1D9207577F2Fe1DBcEC3752 #address derived from the private key
+            - bootnodeId=76a8171707eca17647a47ca99ffd348927dfa60102792ea349a25d5192e61855be83b786e376276a306afcceea4ffd1c9c77e4370b417efc39f328a0d068004c #derived from the nodekeyhex
             - bootnodeIp=172.25.0.101
         build:
-            context: .
-            dockerfile: ./miner/Dockerfile
+            context: ./miner
             args:
-                privatekey: #privatekey
+                privatekey: 93fb85f9229458a7da6cbe996b9f0ae4cb2bb02914d76a651daa385a3410fafc #privatekey
                 password: pass
         container_name: geth-miner-3
         ports:
@@ -86,14 +83,13 @@ services:
         depends_on:
             - geth-dev-miner-1
         environment:
-            - address= #address derived from the private key
-            - bootnodeId= #derived from the nodekeyhex
+            - address=0x4977BA6Aa99867CBA74Ab64AE28046118f7150f5 #address derived from the private key
+            - bootnodeId=76a8171707eca17647a47ca99ffd348927dfa60102792ea349a25d5192e61855be83b786e376276a306afcceea4ffd1c9c77e4370b417efc39f328a0d068004c #derived from the nodekeyhex
             - bootnodeIp=172.25.0.101
         build:
-            context: .
-            dockerfile: ./node/Dockerfile
+            context: ./node
             args:
-                privatekey: #privatekey
+                privatekey: 1d204548ac620b457cfdcf64bdad7d8e70df1bd9b29a8108ffbc0805df5e0d79 #privatekey find a way to export this 
                 password: pass
         container_name: geth-node
         ports:
