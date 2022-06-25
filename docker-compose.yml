@@ -1,0 +1,126 @@
+version: "4"
+services: 
+    geth-bootnode:
+        hostname: geth-bootnode
+        environment:
+            - nodekeyhex= #nodekeyhex
+        build:
+            context: ./bootnode
+        ports:
+            - 30301:30301/udp
+        networks:
+            chainnet:
+                ipv4_address: 172.25.0.101 # why??
+
+    geth-dev-miner-1:
+        hostname: geth-dev-miner-1
+        depends_on:
+            - geth-bootnode
+        environment:
+            - address= #address derived from the privatekey
+            - bootnodeId= #derive from the nodekeyhex
+            - bootnodeIp=172.25.0.101 # why??
+        build:
+            context: ./miner
+            dockerfile: ./miner/Dockerfile
+            args:
+                privatekey: #privatekey
+                password: pass
+        ports:
+            - 8546:8545 # localhost:containerhost
+        container_name: geth-miner-1
+        volumes:
+            - eth-data-1:/root/.ethash
+        networks:
+            chainnet:
+                ipv4_address: 172.25.0.102 # why??
+         
+    geth-dev-miner-2:
+        hostname: geth-dev-miner-2
+        depends_on:
+            - geth-bootnode
+        environment:
+            - address= #address derived from the private key
+            - bootnodeId= #derived from the nodekeyhex
+            - bootnodeIp=172.25.0.101
+        build:
+            context: .
+            dockerfile: ./miner/Dockerfile
+            args:
+                privatekey: #privatekey
+                password: pass
+        container_name: geth-miner-2
+        ports:
+            - 8547:8545
+        valumes:
+            - eth-data-2:/root/.ethash
+        networks:
+            chainnet:
+                ipv4_address: 172.25.0.103
+
+    geth-dev-miner-3:
+        hostname: geth-dev-miner-3
+        depends_on:
+            - geth-bootnode
+        environment:
+            - address= #address derived from the private key
+            - bootnodeId= #derived from the nodekeyhex
+            - bootnodeIp=172.25.0.101
+        build:
+            context: .
+            dockerfile: ./miner/Dockerfile
+            args:
+                privatekey: #privatekey
+                password: pass
+        container_name: geth-miner-3
+        ports:
+            - 8548:8545
+        volumes:
+            - eth-data-3:/root/.ethash
+        networks:
+            chainnet:
+                ipv4_address: 172.25.0.104
+
+    geth-dev-node:
+        hostname: geth-dev-node
+        depends_on:
+            - geth-dev-miner-1
+        environment:
+            - address= #address derived from the private key
+            - bootnodeId= #derived from the nodekeyhex
+            - bootnodeIp=172.25.0.101
+        build:
+            context: .
+            dockerfile: ./node/Dockerfile
+            args:
+                privatekey: #privatekey
+                password: pass
+        container_name: geth-node
+        ports:
+            - 8545:8545
+            - 8646:8646
+        healthcheck:
+            test: wget http://localhost:8545
+            interval: 2s
+            timeout: 5s
+            retries: 30
+        volumes:
+            - eth-data-6:/root/.ethash
+        networks:
+            chainnet:
+                ipv4_address: 172.25.0.110
+
+networks:
+    chainnet:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 172.25.0.0/24
+
+volumes:
+    eth-data-1:
+    eth-data-2:
+    eth-data-3:
+    eth-data-4:
+    eth-data-5:
+    eth-data-6:
